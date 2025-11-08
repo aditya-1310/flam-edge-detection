@@ -9,6 +9,8 @@ public class EdgeDetectionModule extends ReactContextBaseJavaModule {
 
     // 1. Load our C++ library
     static {
+
+        System.loadLibrary("opencv_java4");
         System.loadLibrary("flam-native-lib");
     }
 

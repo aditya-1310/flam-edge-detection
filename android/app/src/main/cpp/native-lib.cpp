@@ -1,4 +1,5 @@
-//// Placeholder for native code#include <jni.h>
+//// Placeholder for native code
+#include <jni.h>
 #include <string>
 #include <android/log.h>
 
