@@ -1,5 +1,12 @@
 # Sets the minimum version of CMake required
 cmake_minimum_required(VERSION 3.18.1)
+# --- Add this block ---
+# Set the path to our copied OpenCV library
+set(OpenCV_DIR ${CMAKE_SOURCE_DIR}/../libs/opencv/native/jni)
+
+# Find the OpenCV package
+find_package(OpenCV REQUIRED)
+# --- End of block ---
 
 # Defines the project name
 project("FlamRndAssignment")
@@ -23,4 +30,5 @@ find_library(
 target_link_libraries(
         flam-native-lib
         ${log-lib}
+        ${OpenCV_LIBS}
 )
