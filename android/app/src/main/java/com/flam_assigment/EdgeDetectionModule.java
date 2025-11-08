@@ -26,13 +26,17 @@ public class EdgeDetectionModule extends ReactContextBaseJavaModule {
     // This is a placeholder function we will implement in C++
     // It will take a source image path and return a processed image path
     @ReactMethod
+    private native String nativeProcessImage(String sourceUri);
     public void processImage(String sourceUri, Promise promise) {
         try {
-            // We will add a call to our native function here
-            String resultUri = "processed_image_path_from_c++";
-            promise.resolve(resultUri);
-        } catch (Exception e) {
-            promise.reject("NATIVE_ERROR", e);
-        }
+        // Call our new C++ function and get the result path
+        String resultUri = nativeProcessImage(sourceUri);
+
+        // Send the successful result back to JavaScript
+        promise.resolve(resultUri);
+    } catch (Exception e) {
+        // Send an error back to JavaScript if anything went wrong
+        promise.reject("NATIVE_ERROR", e);
+    }
     }
 }
