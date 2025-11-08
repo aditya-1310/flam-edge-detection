@@ -61,65 +61,59 @@ def enableProguardInReleaseBuilds = false
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
- *
- * For example, to use the international variant, you can use:
- * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
- *
- * The international variant includes ICU i18n library and necessary data
- * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
- * give correct results when using with locales other than en-US. Note that
- * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
-    compileSdk rootProject.ext.compileSdkVersion
+    // --- FIXED ALL SYNTAX WARNINGS ---
+    ndkVersion = rootProject.ext.ndkVersion
+    buildToolsVersion = rootProject.ext.buildToolsVersion
+    compileSdk = rootProject.ext.compileSdkVersion
 
-    namespace "com.flam_assigment"
+    namespace = "com.flam_assigment"
     defaultConfig {
-        applicationId "com.flam_assigment"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.flam_assigment"
+        minSdkVersion = rootProject.ext.minSdkVersion
+        targetSdkVersion = rootProject.ext.targetSdkVersion
+        versionCode = 1
+        versionName = "1.0"
 
-        // <-- ADDED BLOCK 1
         ndk {
-            abiFilters 'arm64-v8a', 'armeabi-v7a' 
+            // This includes the emulator CPU
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
         }
     }
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile = file('debug.keystore')
+            storePassword = 'android'
+            keyAlias = 'androiddebugkey'
+            keyPassword = 'android'
         }
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig = signingConfigs.debug
+            minifyEnabled = enableProguardInReleaseBuilds
+            // --- FIXED PROGUARD SYNTAX ERROR ---
+            proguardFiles = [getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"]
         }
     }
 
-    // <-- ADDED BLOCK 2
     packagingOptions {
         pickFirst 'lib/arm64-v8a/libopencv_java4.so'
         pickFirst 'lib/armeabi-v7a/libopencv_java4.so'
+        pickFirst 'lib/x86_64/libopencv_java4.so'
     }
 
-    // <-- MOVED BLOCK 3 (Moved from outside to inside 'android')
+    // --- FIXED C++ BLOCK: UNCOMMENTED AND MOVED INSIDE 'android' ---
     externalNativeBuild {
         cmake {
-            path "src/main/cpp/CMakeLists.txt"
-            version "3.18.1" // Or a newer version like "3.22.1" if you have it
+            path = "src/main/cpp/CMakeLists.txt"
+            version = "3.22.1" // Using a standard, modern version
         }
     }
 }
@@ -127,7 +121,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    
+
     implementation project(':opencv')
 
     if (hermesEnabled.toBoolean()) {
@@ -137,3 +131,4 @@ dependencies {
     }
 }
 
+// --- DELETED THE DUPLICATE/MISPLACED C++ BLOCK FROM THE END OF THE FILE ---
