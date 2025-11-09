@@ -1,10 +1,10 @@
 ## flam-assigment — Edge Detection (Android + Web)
 
-This project implements edge detection on Android (React Native + JNI + OpenCV) and a lightweight Web demo (OpenCV.js). It includes native bridging, a minimal C++ pipeline, and a browser-based example.
+This project implements edge detection on Android (React Native + JNI + OpenCV) and a Web demo (Next.js + simple server-side processing). It includes native bridging, a minimal C++ pipeline, and a browser-based example.
 
 ### Features
 - Android: pick an image, process with OpenCV (Canny) via JNI, output `_processed.jpg`; defensive native library loading; optional New Architecture toggled in `android/gradle.properties`.
-- Web: single-file OpenCV.js demo to upload an image and view edges.
+- Web: Next.js app with upload UI and server-side processing endpoint. For submission, it uses a safe Sobel fallback (JS) and is wired so the same endpoint can invoke the C++ pipeline binary.
 
 ### Screenshots / GIFs
 Place images under `docs/screenshots/` and reference them here:
@@ -17,16 +17,25 @@ Place images under `docs/screenshots/` and reference them here:
 3. If enabling New Architecture set `newArchEnabled=true` and ensure `SoLoader.init(this,false)` in `MainApplication.onCreate()`.
 
 ### Setup (Web)
-Open `web/index.html` directly in your browser or serve statically.
+```
+cd web
+npm install
+npm run dev
+```
+Then open http://localhost:3000 and upload an image. The API returns a processed image (Sobel fallback for demo).
+
+To route to native C++ instead of fallback:
+- Build your C++ CLI (OpenCV-based) that accepts `inputPath outputPath`.
+- Update `pages/api/process.ts` to spawn that binary via `child_process` with the uploaded temp file path and read the output file into base64.
 
 ### Architecture
 - JS -> `NativeModules.EdgeDetectionModule.processImage(path)` -> Java bridge -> JNI (`native-lib.cpp`) -> OpenCV -> write `_processed.jpg` -> Promise resolves path.
 - Web mirrors this using OpenCV.js in the browser.
 
-Key files: Java bridge `android/app/src/main/java/com/flam_assigment/EdgeDetectionModule.java`, C++ `android/app/src/main/cpp/native-lib.cpp`, Web `web/index.html`.
+Key files: Java bridge `android/app/src/main/java/com/flam_assigment/EdgeDetectionModule.java`, C++ `android/app/src/main/cpp/native-lib.cpp`, Web `web/pages/index.tsx` and API `web/pages/api/process.ts`.
 
 ### Commit history guidance
-Multiple commits reflect incremental work (native module fixes, SoLoader init, web demo, docs). Please do not squash for evaluation.
+Multiple commits reflect incremental work (web scaffold, native module fix, docs). Please do not squash for evaluation.
 
 ---
 
