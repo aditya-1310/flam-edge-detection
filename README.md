@@ -9,7 +9,10 @@ This project implements edge detection on Android (React Native + JNI + OpenCV) 
 ### Screenshots / GIFs
 Place images under `docs/screenshots/` and reference them here:
 - docs/screenshots/app-home.png
+![alt text](image.png)
 - docs/screenshots/processed-image.png
+![alt text](image-1.png)
+![alt text](image-2.png)
 
 ### Setup (Android)
 1. Prereqs: Android Studio, SDK 36, NDK r27+, CMake ≥3.22, Node 18+
