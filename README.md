@@ -1,3 +1,35 @@
+## flam-assigment — Edge Detection (Android + Web)
+
+This project implements edge detection on Android (React Native + JNI + OpenCV) and a lightweight Web demo (OpenCV.js). It includes native bridging, a minimal C++ pipeline, and a browser-based example.
+
+### Features
+- Android: pick an image, process with OpenCV (Canny) via JNI, output `_processed.jpg`; defensive native library loading; optional New Architecture toggled in `android/gradle.properties`.
+- Web: single-file OpenCV.js demo to upload an image and view edges.
+
+### Screenshots / GIFs
+Place images under `docs/screenshots/` and reference them here:
+- docs/screenshots/app-home.png
+- docs/screenshots/processed-image.png
+
+### Setup (Android)
+1. Prereqs: Android Studio, SDK 36, NDK r27+, CMake ≥3.22, Node 18+
+2. Install & run: `npm install`, `npm start` (Metro), `npm run android`
+3. If enabling New Architecture set `newArchEnabled=true` and ensure `SoLoader.init(this,false)` in `MainApplication.onCreate()`.
+
+### Setup (Web)
+Open `web/index.html` directly in your browser or serve statically.
+
+### Architecture
+- JS -> `NativeModules.EdgeDetectionModule.processImage(path)` -> Java bridge -> JNI (`native-lib.cpp`) -> OpenCV -> write `_processed.jpg` -> Promise resolves path.
+- Web mirrors this using OpenCV.js in the browser.
+
+Key files: Java bridge `android/app/src/main/java/com/flam_assigment/EdgeDetectionModule.java`, C++ `android/app/src/main/cpp/native-lib.cpp`, Web `web/index.html`.
+
+### Commit history guidance
+Multiple commits reflect incremental work (native module fixes, SoLoader init, web demo, docs). Please do not squash for evaluation.
+
+---
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
