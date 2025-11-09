@@ -7,11 +7,17 @@ import com.facebook.react.bridge.Promise;
 
 public class EdgeDetectionModule extends ReactContextBaseJavaModule {
 
-    // 1. Load our C++ library
-    static {
+    private static boolean libsLoaded = false;
 
-        System.loadLibrary("opencv_java4");
-        System.loadLibrary("flam-native-lib");
+    // Load native libraries defensively to avoid hard crashes on init issues
+    static {
+        try {
+            System.loadLibrary("opencv_java4");
+            System.loadLibrary("flam-native-lib");
+            libsLoaded = true;
+        } catch (Throwable t) {
+            libsLoaded = false;
+        }
     }
 
     public EdgeDetectionModule(ReactApplicationContext context) {
@@ -24,13 +30,17 @@ public class EdgeDetectionModule extends ReactContextBaseJavaModule {
         return "EdgeDetectionModule";
     }
 
-    // 3. Define the JNI bridge function
-    // This is a placeholder function we will implement in C++
-    // It will take a source image path and return a processed image path
-    @ReactMethod
+    // JNI bridge (implemented in C++)
     private native String nativeProcessImage(String sourceUri);
+
+    // Exposed method to JS
+    @ReactMethod
     public void processImage(String sourceUri, Promise promise) {
         try {
+        if (!libsLoaded) {
+            promise.reject("NATIVE_LIB_LOAD_FAILURE", "OpenCV/native library not loaded");
+            return;
+        }
         // Call our new C++ function and get the result path
         String resultUri = nativeProcessImage(sourceUri);
 
